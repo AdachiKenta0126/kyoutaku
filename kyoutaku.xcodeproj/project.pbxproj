@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5F2E7347261ED79100B67A59 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5F2E7346261ED79000B67A59 /* GoogleService-Info.plist */; };
 		5F74A934260110CD00175FB0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74A933260110CD00175FB0 /* AppDelegate.swift */; };
 		5F74A936260110CD00175FB0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74A935260110CD00175FB0 /* SceneDelegate.swift */; };
 		5F74A938260110CD00175FB0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74A937260110CD00175FB0 /* ContentView.swift */; };
@@ -15,6 +16,10 @@
 		5F74A940260110D400175FB0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5F74A93E260110D400175FB0 /* LaunchScreen.storyboard */; };
 		5F74A94B260110D500175FB0 /* kyoutakuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74A94A260110D500175FB0 /* kyoutakuTests.swift */; };
 		5F74A956260110D500175FB0 /* kyoutakuUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74A955260110D500175FB0 /* kyoutakuUITests.swift */; };
+		5F807B12265602F600164DE0 /* KyotakuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F807B11265602F600164DE0 /* KyotakuViewModel.swift */; };
+		659C0A1441EE7C862CA45D40 /* Pods_kyoutakuTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 377A84ED8977CCA6E563FC45 /* Pods_kyoutakuTests.framework */; };
+		93FDD141E050FE25A8BB8491 /* Pods_kyoutaku_kyoutakuUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B14251FDC766CBEF2B743F6 /* Pods_kyoutaku_kyoutakuUITests.framework */; };
+		A0307E0CCB4968531F13E465 /* Pods_kyoutaku.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1028D9663740B541374AB942 /* Pods_kyoutaku.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +40,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1028D9663740B541374AB942 /* Pods_kyoutaku.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_kyoutaku.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		377A84ED8977CCA6E563FC45 /* Pods_kyoutakuTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_kyoutakuTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F2E7346261ED79000B67A59 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		5F72366C2645244900CB77D2 /* kyoutaku.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = kyoutaku.entitlements; sourceTree = "<group>"; };
 		5F74A930260110CD00175FB0 /* kyoutaku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kyoutaku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F74A933260110CD00175FB0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5F74A935260110CD00175FB0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -49,6 +58,14 @@
 		5F74A951260110D500175FB0 /* kyoutakuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = kyoutakuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F74A955260110D500175FB0 /* kyoutakuUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = kyoutakuUITests.swift; sourceTree = "<group>"; };
 		5F74A957260110D500175FB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5F807B11265602F600164DE0 /* KyotakuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KyotakuViewModel.swift; sourceTree = "<group>"; };
+		6B14251FDC766CBEF2B743F6 /* Pods_kyoutaku_kyoutakuUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_kyoutaku_kyoutakuUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		798F280DB25DF57F01EE6203 /* Pods-kyoutaku.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kyoutaku.release.xcconfig"; path = "Target Support Files/Pods-kyoutaku/Pods-kyoutaku.release.xcconfig"; sourceTree = "<group>"; };
+		831C9BCC5E47340BB8703AB5 /* Pods-kyoutakuTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kyoutakuTests.release.xcconfig"; path = "Target Support Files/Pods-kyoutakuTests/Pods-kyoutakuTests.release.xcconfig"; sourceTree = "<group>"; };
+		86DE019E8F484C70767E0CCF /* Pods-kyoutaku-kyoutakuUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kyoutaku-kyoutakuUITests.debug.xcconfig"; path = "Target Support Files/Pods-kyoutaku-kyoutakuUITests/Pods-kyoutaku-kyoutakuUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		CFEF8C46AD0797FA8C62854C /* Pods-kyoutaku-kyoutakuUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kyoutaku-kyoutakuUITests.release.xcconfig"; path = "Target Support Files/Pods-kyoutaku-kyoutakuUITests/Pods-kyoutaku-kyoutakuUITests.release.xcconfig"; sourceTree = "<group>"; };
+		DF5DAFBA441A9A675256946F /* Pods-kyoutakuTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kyoutakuTests.debug.xcconfig"; path = "Target Support Files/Pods-kyoutakuTests/Pods-kyoutakuTests.debug.xcconfig"; sourceTree = "<group>"; };
+		EE1135F6AF34240FAC4C3C48 /* Pods-kyoutaku.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kyoutaku.debug.xcconfig"; path = "Target Support Files/Pods-kyoutaku/Pods-kyoutaku.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0307E0CCB4968531F13E465 /* Pods_kyoutaku.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				659C0A1441EE7C862CA45D40 /* Pods_kyoutakuTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93FDD141E050FE25A8BB8491 /* Pods_kyoutaku_kyoutakuUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +103,8 @@
 				5F74A949260110D500175FB0 /* kyoutakuTests */,
 				5F74A954260110D500175FB0 /* kyoutakuUITests */,
 				5F74A931260110CD00175FB0 /* Products */,
+				79C13D85FA26570FE378868A /* Pods */,
+				EDEF5EB48826F4685E27FFD2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,12 +121,15 @@
 		5F74A932260110CD00175FB0 /* kyoutaku */ = {
 			isa = PBXGroup;
 			children = (
+				5F72366C2645244900CB77D2 /* kyoutaku.entitlements */,
 				5F74A933260110CD00175FB0 /* AppDelegate.swift */,
 				5F74A935260110CD00175FB0 /* SceneDelegate.swift */,
 				5F74A937260110CD00175FB0 /* ContentView.swift */,
+				5F807B11265602F600164DE0 /* KyotakuViewModel.swift */,
 				5F74A939260110D400175FB0 /* Assets.xcassets */,
 				5F74A93E260110D400175FB0 /* LaunchScreen.storyboard */,
 				5F74A941260110D500175FB0 /* Info.plist */,
+				5F2E7346261ED79000B67A59 /* GoogleService-Info.plist */,
 				5F74A93B260110D400175FB0 /* Preview Content */,
 			);
 			path = kyoutaku;
@@ -136,6 +161,29 @@
 			path = kyoutakuUITests;
 			sourceTree = "<group>";
 		};
+		79C13D85FA26570FE378868A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				EE1135F6AF34240FAC4C3C48 /* Pods-kyoutaku.debug.xcconfig */,
+				798F280DB25DF57F01EE6203 /* Pods-kyoutaku.release.xcconfig */,
+				86DE019E8F484C70767E0CCF /* Pods-kyoutaku-kyoutakuUITests.debug.xcconfig */,
+				CFEF8C46AD0797FA8C62854C /* Pods-kyoutaku-kyoutakuUITests.release.xcconfig */,
+				DF5DAFBA441A9A675256946F /* Pods-kyoutakuTests.debug.xcconfig */,
+				831C9BCC5E47340BB8703AB5 /* Pods-kyoutakuTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		EDEF5EB48826F4685E27FFD2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1028D9663740B541374AB942 /* Pods_kyoutaku.framework */,
+				6B14251FDC766CBEF2B743F6 /* Pods_kyoutaku_kyoutakuUITests.framework */,
+				377A84ED8977CCA6E563FC45 /* Pods_kyoutakuTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -143,9 +191,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F74A95A260110D500175FB0 /* Build configuration list for PBXNativeTarget "kyoutaku" */;
 			buildPhases = (
+				A0173642416CF3C4ABFE3C20 /* [CP] Check Pods Manifest.lock */,
 				5F74A92C260110CD00175FB0 /* Sources */,
 				5F74A92D260110CD00175FB0 /* Frameworks */,
 				5F74A92E260110CD00175FB0 /* Resources */,
+				9D6D12D583B380C3CC1B44DF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -160,6 +210,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F74A95D260110D500175FB0 /* Build configuration list for PBXNativeTarget "kyoutakuTests" */;
 			buildPhases = (
+				CDB526C6F33A3E88D6F36A7C /* [CP] Check Pods Manifest.lock */,
 				5F74A942260110D500175FB0 /* Sources */,
 				5F74A943260110D500175FB0 /* Frameworks */,
 				5F74A944260110D500175FB0 /* Resources */,
@@ -178,9 +229,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F74A960260110D500175FB0 /* Build configuration list for PBXNativeTarget "kyoutakuUITests" */;
 			buildPhases = (
+				3430D868F3EE5B9C42E3D81E /* [CP] Check Pods Manifest.lock */,
 				5F74A94D260110D500175FB0 /* Sources */,
 				5F74A94E260110D500175FB0 /* Frameworks */,
 				5F74A94F260110D500175FB0 /* Resources */,
+				013FCA608078E2082D905A76 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -199,7 +252,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1100;
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = AIT;
 				TargetAttributes = {
 					5F74A92F260110CD00175FB0 = {
@@ -241,6 +294,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F74A940260110D400175FB0 /* LaunchScreen.storyboard in Resources */,
+				5F2E7347261ED79100B67A59 /* GoogleService-Info.plist in Resources */,
 				5F74A93D260110D400175FB0 /* Preview Assets.xcassets in Resources */,
 				5F74A93A260110D400175FB0 /* Assets.xcassets in Resources */,
 			);
@@ -262,12 +316,116 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		013FCA608078E2082D905A76 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kyoutaku-kyoutakuUITests/Pods-kyoutaku-kyoutakuUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kyoutaku-kyoutakuUITests/Pods-kyoutaku-kyoutakuUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kyoutaku-kyoutakuUITests/Pods-kyoutaku-kyoutakuUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3430D868F3EE5B9C42E3D81E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-kyoutaku-kyoutakuUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9D6D12D583B380C3CC1B44DF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kyoutaku/Pods-kyoutaku-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-kyoutaku/Pods-kyoutaku-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-kyoutaku/Pods-kyoutaku-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A0173642416CF3C4ABFE3C20 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-kyoutaku-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CDB526C6F33A3E88D6F36A7C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-kyoutakuTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		5F74A92C260110CD00175FB0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				5F74A934260110CD00175FB0 /* AppDelegate.swift in Sources */,
+				5F807B12265602F600164DE0 /* KyotakuViewModel.swift in Sources */,
 				5F74A936260110CD00175FB0 /* SceneDelegate.swift in Sources */,
 				5F74A938260110CD00175FB0 /* ContentView.swift in Sources */,
 			);
@@ -342,6 +500,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -402,6 +561,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -432,19 +592,23 @@
 		};
 		5F74A95B260110D500175FB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EE1135F6AF34240FAC4C3C48 /* Pods-kyoutaku.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = kyoutaku/kyoutaku.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"kyoutaku/Preview Content\"";
-				DEVELOPMENT_TEAM = X9UU7S827U;
+				DEVELOPMENT_TEAM = SM57646XVK;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = kyoutaku/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Adachi-Kenta.kyoutaku";
+				PRODUCT_BUNDLE_IDENTIFIER = "Adachi-Kenta.kyoutaku1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -452,19 +616,23 @@
 		};
 		5F74A95C260110D500175FB0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 798F280DB25DF57F01EE6203 /* Pods-kyoutaku.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = kyoutaku/kyoutaku.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"kyoutaku/Preview Content\"";
-				DEVELOPMENT_TEAM = X9UU7S827U;
+				DEVELOPMENT_TEAM = SM57646XVK;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = kyoutaku/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Adachi-Kenta.kyoutaku";
+				PRODUCT_BUNDLE_IDENTIFIER = "Adachi-Kenta.kyoutaku1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -472,6 +640,7 @@
 		};
 		5F74A95E260110D500175FB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DF5DAFBA441A9A675256946F /* Pods-kyoutakuTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -494,6 +663,7 @@
 		};
 		5F74A95F260110D500175FB0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 831C9BCC5E47340BB8703AB5 /* Pods-kyoutakuTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -516,6 +686,7 @@
 		};
 		5F74A961260110D500175FB0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 86DE019E8F484C70767E0CCF /* Pods-kyoutaku-kyoutakuUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -536,6 +707,7 @@
 		};
 		5F74A962260110D500175FB0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFEF8C46AD0797FA8C62854C /* Pods-kyoutaku-kyoutakuUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

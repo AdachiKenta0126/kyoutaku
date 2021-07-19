@@ -8,6 +8,19 @@
 
 import SwiftUI
 import FirebaseAuth
+import Firebase
+
+class ViewModel: ObservableObject {
+    @Published var isServicePlayer = false
+    
+    @Published var CheckS: [[Int]] = [[Int]](repeating: [Int](repeating: 0, count: 2), count: 100)
+    @Published var CheckR: [[Int]] = [[Int]](repeating: [Int](repeating: 0, count: 2), count: 100)
+    
+    @Published var PlayCount: Int = 0
+    
+}
+
+
 
 struct ContentView: View {
     var body: some View {
@@ -83,29 +96,82 @@ struct SiaiItiranView: View {
 
 
 struct SiaiTourokuView: View {
-    @State private var name1 = ""
-    @State private var name2 = ""
+    //最初のサービス権
+    @State private var isCheckedS = false
+    //ダブルスのレシーブ権
+    @State private var isCheckedR = false
+    //シングルかダブルス
+    @State private var SinglesOrDoubles = true
+    //データモデル(サービス交代)
+    @EnvironmentObject var vm : ViewModel
+    //選手一覧
+    @State private var ArrayPlayer = [String]()
+    //データモデル(Firestore)
+    @ObservedObject private var kyotakuVM = KyotakuViewModel()
     
-    @State private var isChecked = false
+    //選手選択
+    @State private var SelectionPlayer1 = -1
+    @State private var SelectionPlayer2 = -1
+    @State private var SelectionPlayer3 = -1
+    @State private var SelectionPlayer4 = -1
+    //pickerが表示されているか
+    @State private var isShowingPicker1 = false
+    @State private var isShowingPicker2 = false
+    @State private var isShowingPicker3 = false
+    @State private var isShowingPicker4 = false
+
 //    @State private var selectedIndex = 0
     var body: some View {
-        VStack(spacing: 15){
+        
+        VStack(){
+            Button(action: {
+                SinglesOrDoubles.toggle()
+            }) {
+                if(SinglesOrDoubles){
+                    Text("シングルス")
+                        .font(.largeTitle)
+                        
+                }else{
+                    Text("ダブルス")
+                        .font(.largeTitle)
+                        
+                }
+
+            }
+            
             HStack{
                 Spacer()
-                Text("サービス　　 ").font(.headline)
-                    .colorMultiply(.blue)
+                Text("サービス　")
+                    .font(.headline)
             }
+            
             HStack{
-                Text("選手1:").font(.largeTitle)
-                TextField("選手名", text: $name1)
-                    .frame(width: 500, height: 50, alignment: .center)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
-                    .font(.largeTitle)
-                    .padding()
+                Text("選手1:").font(.largeTitle).padding(20)
+                Button(action: {
+                    if ArrayPlayer.isEmpty{
+                        kyotakuVM.users.forEach() { user in
+                            ArrayPlayer.append(user.player_name)
+                        }
+                    }
                 
-                
-                Button(action: toggle) {
-                            if(!isChecked) {
+                    self.isShowingPicker1.toggle()
+                    self.isShowingPicker2 = false
+                    self.isShowingPicker3 = false
+                    self.isShowingPicker4 = false
+                }) {
+                    if(SelectionPlayer1 == -1){
+                        Text("選手を選択")
+                            .padding()
+                            .font(.largeTitle)
+                    }else{
+                        Text("\(ArrayPlayer[self.SelectionPlayer1])")
+                                .padding()
+                                .font(.largeTitle)
+                    }
+                }
+                Spacer()
+                Button(action: toggleS) {
+                            if(!isCheckedS) {
                                 Image(systemName: "checkmark.square.fill")
                                     .resizable()
                                     .frame(width: 50, height: 50, alignment: .leading)
@@ -115,19 +181,46 @@ struct SiaiTourokuView: View {
                                     .resizable()
                                     .frame(width: 50, height: 50, alignment: .leading)
                             }
-                }
+                }.padding(20)
                 
             }
+            
             HStack{
-                Text("選手2:").font(.largeTitle)
-                TextField("選手名", text: $name2)
-                    .frame(width: 500, height: 50, alignment: .center)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
-                    .font(.largeTitle)
-                    .padding()
+
+                Text("選手2:").font(.largeTitle).padding(20)
                 
-                Button(action: toggle) {
-                            if(isChecked) {
+                Button(action: {
+                    if ArrayPlayer.isEmpty {
+                        kyotakuVM.users.forEach() { user in
+                            ArrayPlayer.append(user.player_name)
+                        }
+                    }
+                    self.isShowingPicker1 = false
+                    self.isShowingPicker2.toggle()
+                    self.isShowingPicker3 = false
+                    self.isShowingPicker4 = false
+                }) {
+                    if(SelectionPlayer2 == -1){
+                        Text("選手を選択")
+                            .padding()
+                            .font(.largeTitle)
+                    }else{
+                        Text("\(ArrayPlayer[self.SelectionPlayer2])")
+                                .padding()
+                                .font(.largeTitle)
+                    }
+
+                        
+                }
+//                TextField("選手名", text: $name2)
+//                    .frame(width: 500, height: 50, alignment: .center)
+//                    .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
+//                    .font(.largeTitle)
+//                    .padding()
+                    
+                Spacer()
+                Button(action: toggleS) {
+                            if(isCheckedS) {
                                 Image(systemName: "checkmark.square.fill")
                                     .resizable()
                                     .frame(width: 50, height: 50, alignment: .center)
@@ -137,9 +230,112 @@ struct SiaiTourokuView: View {
                                     .resizable()
                                     .frame(width: 50, height: 50, alignment: .center)
                             }
-                }
+                }.padding(20)
                 
+                
+            }.onAppear(){
+                self.kyotakuVM.fetchData()
+                
+           }
+            
+            if(!SinglesOrDoubles){
+                HStack{
+                    Spacer()
+                    Text("レシーブ　")
+                        .font(.headline)
+                }
+                HStack{
+
+                    Text("選手3:").font(.largeTitle).padding(20)
+                    
+                    Button(action: {
+                        if ArrayPlayer.isEmpty {
+                            kyotakuVM.users.forEach() { user in
+                                ArrayPlayer.append(user.player_name)
+                            }
+                        }
+                        self.isShowingPicker1 = false
+                        self.isShowingPicker2 = false
+                        self.isShowingPicker3.toggle()
+                        self.isShowingPicker4 = false
+                    }) {
+                        if(SelectionPlayer3 == -1){
+                            Text("選手を選択")
+                                .padding()
+                                .font(.largeTitle)
+                        }else{
+                            Text("\(ArrayPlayer[self.SelectionPlayer3])")
+                                    .padding()
+                                    .font(.largeTitle)
+                        }
+
+                            
+                    }
+
+                        
+                    Spacer()
+                    Button(action: toggleR) {
+                                if(!isCheckedR) {
+                                    Image(systemName: "checkmark.square.fill")
+                                        .resizable()
+                                        .frame(width: 50, height: 50, alignment: .center)
+                                .foregroundColor(.green)
+                                } else {
+                                    Image(systemName: "square")
+                                        .resizable()
+                                        .frame(width: 50, height: 50, alignment: .center)
+                                }
+                    }.padding(20)
+                }
+                HStack{
+
+                    Text("選手4:").font(.largeTitle).padding(20)
+                    
+                    Button(action: {
+                        if ArrayPlayer.isEmpty{
+                            kyotakuVM.users.forEach() { user in
+                                ArrayPlayer.append(user.player_name)
+                            }
+                        }
+                        self.isShowingPicker1 = false
+                        self.isShowingPicker2 = false
+                        self.isShowingPicker3 = false
+                        self.isShowingPicker4.toggle()
+                    }) {
+                        if(SelectionPlayer4 == -1){
+                            Text("選手を選択")
+                                .padding()
+                                .font(.largeTitle)
+                        }else{
+                            Text("\(ArrayPlayer[self.SelectionPlayer4])")
+                                    .padding()
+                                    .font(.largeTitle)
+                        }
+
+                            
+                    }
+
+                        
+                    Spacer()
+                    Button(action: toggleR) {
+                                if(isCheckedR) {
+                                    Image(systemName: "checkmark.square.fill")
+                                        .resizable()
+                                        .frame(width: 50, height: 50, alignment: .center)
+                                .foregroundColor(.green)
+                                } else {
+                                    Image(systemName: "square")
+                                        .resizable()
+                                        .frame(width: 50, height: 50, alignment: .center)
+                                }
+                    }.padding(20)
+                    
+                }
             }
+////////////////////////////////////////////////////////////////////
+//Xcode12.5にてバグ発生(NavigationLinkを二つ使うと画面遷移がうまくいかない)//
+////////////////////////////////////////////////////////////////////
+            
             HStack {
                 NavigationLink(destination: TourokuView()) {
                     Text("　　＊新たな選手を登録する").font(.title)
@@ -147,155 +343,426 @@ struct SiaiTourokuView: View {
                 }
                 Spacer()
             }
+            //バグ回避用(消したい;;
+            NavigationLink(destination: SyozokuTourokuView()) {
+                Text("").font(.title)
+                                            .underline()
+            }
             
-            NavigationLink(destination: MatchView1()) {
+            NavigationLink(destination: MatchView1(Count: 0)) {
                 Text("登録").font(.title).frame(width: 200, height: 80).overlay(
                 RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.blue, lineWidth: 1))
+
+            }.simultaneousGesture(TapGesture().onEnded{
+                print("Hello world!")
+            })
+            
+            ZStack{
+                PlayerNamePicker(selection: self.$SelectionPlayer1, isShowing: self.$isShowingPicker1, NameArray: self.$ArrayPlayer)
+                    .offset(y: self.isShowingPicker1 ? CGFloat(0) : UIScreen.main.bounds.height)
+                
+                PlayerNamePicker(selection: self.$SelectionPlayer2, isShowing: self.$isShowingPicker2, NameArray: self.$ArrayPlayer)
+                    .offset(y: self.isShowingPicker2 ? CGFloat(0) : UIScreen.main.bounds.height)
+                
+                PlayerNamePicker(selection: self.$SelectionPlayer3, isShowing: self.$isShowingPicker3, NameArray: self.$ArrayPlayer)
+                    .offset(y: self.isShowingPicker3 ? CGFloat(0) : UIScreen.main.bounds.height)
+                
+                PlayerNamePicker(selection: self.$SelectionPlayer4, isShowing: self.$isShowingPicker4, NameArray: self.$ArrayPlayer)
+                    .offset(y: self.isShowingPicker4 ? CGFloat(0) : UIScreen.main.bounds.height)
             }
-            Spacer()
+
         }
     }
     
     // タップ時の状態の切り替え
-    func toggle() -> Void {
-        isChecked = !isChecked
+    func toggleS() -> Void {
+        isCheckedS = !isCheckedS
+        vm.isServicePlayer = isCheckedS
+        UIImpactFeedbackGenerator(style: .medium)
+        .impactOccurred()
+    }
+    // タップ時の状態の切り替え
+    func toggleR() -> Void {
+        isCheckedR = !isCheckedR
+//        vm.isServicePlayer = isCheckedS
         UIImpactFeedbackGenerator(style: .medium)
         .impactOccurred()
     }
 }
 
+//サービス画面
 struct MatchView1: View {
+    
+    @State var array = ["横回転","縦回転","YG","バックハンド","巻き込み","しゃがみ込み"]
+    
+    @State var selsectBattingMethod = 0
+    @State var selsectCourse = 0
+    
+    @State private var isCheckSelect1 = false
+    @State private var isCheckSelect2 = false
+    
+    @EnvironmentObject var vm : ViewModel
+    
+    let Count: Int
+    
     var body: some View {
-                VStack(spacing: 10){
-                    HStack{
-
-                        NavigationLink(destination: MatchView2()) {
-                            Text("サービス交代").font(.title).frame(width: 200, height: 80).overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.red, lineWidth: 1))
-                            .padding(40)
-                        }
-                        Spacer()
-                        NavigationLink(destination: Timeout()) {
-                            Text("タイムアウト").font(.title).frame(width: 200, height: 80).overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.red, lineWidth: 1))
-                            .padding(40)
-                        }
-                            
+            
+            VStack(spacing: 5){
+                HStack{
+                    Spacer()
+                    Spacer()
+                    Button(action: {
+                        vm.isServicePlayer.toggle()
+                    }) {
+                        Text("サービス交代").font(.title)
+                        .foregroundColor(.white)
+                        .frame(width: 200, height: 70).overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 2))
+                            .background(Color(red: 0.917, green: 0.25, blue: 0.468))
+                        .cornerRadius(10)
+                        .padding(10)
                     }
-                    HStack{
-                        Button(action: {
-
-                        }) {
-                            Text("横回転").font(.title).frame(width: 200, height: 80).overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.blue, lineWidth: 1))
-                                    .padding()
-                        }
-                        Button(action: {
-
-                        }) {
-                            Text("縦回転").font(.title).frame(width: 200, height: 80).overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.blue, lineWidth: 1))
-                                    .padding()
-                        }
-                        Button(action: {
-
-                        }) {
-                            Text("YG").font(.title).frame(width: 200, height: 80).overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.blue, lineWidth: 1))
-                                    .padding()
-                        }
-                            
-                    }
-                    HStack{
-                        Button(action: {
-
-                        }) {
-                            Text("バックハンド").font(.title).frame(width: 200, height: 80).overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.blue, lineWidth: 1))
-                                    .padding()
-                        }
-                        Button(action: {
-
-                        }) {
-                            Text("巻き込み").font(.title).frame(width: 200, height: 80).overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.blue, lineWidth: 1))
-                                    .padding()
-                        }
-                        Button(action: {
-
-                        }) {
-                            Text("しゃがみ込み").font(.title).frame(width: 200, height: 80).overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.blue, lineWidth: 1))
-                                    .padding()
-                        }
-                            
-                    }
-                    HStack{
-                        Button(action: {
-
-                        }) {
-                            Text("コート反転").font(.title).frame(width: 200, height: 80).overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.green, lineWidth: 1))
-                                    .padding()
-                        }
-                        Spacer()
-                            
+                    
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    NavigationLink(destination: Timeout()) {
+                        Text("タイムアウト").font(.title)
+                        .foregroundColor(.white)
+                        .frame(width: 200, height: 70).overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 2))
+                            .background(Color(red: 0.917, green: 0.25, blue: 0.468))
+                        .cornerRadius(10)
+                        .padding(10)
                     }
                     Spacer()
-                }.navigationBarTitle("選手1サービス", displayMode: .inline)
+                    Spacer()
+                }
+                
+                //打法
+                LazyVGrid(columns: Array(repeating: .init(.fixed(200)), count: 3), alignment: .center, spacing:10) { // カラム数の指定
+                    ForEach((1...6), id: \.self) { index in
+                        
+                        Button(action: {
+                            selsectBattingMethod = index
+                            vm.CheckS[vm.PlayCount
+                            ][0] = index
+                            self.isCheckSelect1 = true
+                        }) {
+                            Text(array[index - 1]).font(.title)
+                                .foregroundColor(selsectBattingMethod == index ?  Color(red: 1, green: 1, blue: 1, opacity:0.4) : Color(red: 1, green: 1, blue: 1, opacity:1))
+                                
+                                .frame(width: 180, height: 70).overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.black, lineWidth: 1))
+                                .background(Color(red: 0.246, green: 0.5, blue: 0.992))
+                                .cornerRadius(10)
+                                .padding()
+                        }
+                        
+                    }
+                }
+            
+                HStack{
+                    Spacer()
+                    Button(action: {
+
+                    }) {
+                        
+                        Text("コート反転").font(.title)
+                            .foregroundColor(.white)
+                            .frame(width: 230, height: 50).overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 1))
+                            .background(Color(red: 0.191, green: 0.468, blue: 0.453))
+                            .cornerRadius(10)
+                            
+                    }
+                    Text("プレイ数:\(Count)")
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                        
+                }
+            
+                HStack{
+                    Spacer()
+                    if(vm.isServicePlayer){
+                        Text("0 選手2: 　　　　").font(.title)
+                            .padding()
+                    }else{
+                        Text("0 選手2: サービス").font(.title)
+                            .padding()
+                    }
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                }
+                
+                ZStack{
+                    //コース
+                    LazyVGrid(columns: Array(repeating: .init(.fixed(170)), count: 3), alignment: .center, spacing:5) {
+
+                        // カラム数の指定
+                        ForEach((1...9), id: \.self) { index in
+                            
+                            Button(action: {
+                                selsectCourse = index
+                                vm.CheckS[vm.PlayCount][1] = index
+                                self.isCheckSelect2 = true
+                                
+                            }) {
+                                Text("").frame(width: 170, height: 105, alignment: .center)
+                                    .border(Color.black , width: 1)
+                            }
+                            .background(selsectCourse == index ?  Color(red: 0.3125, green: 0.664, blue: 0.613) : Color(red: 0.191, green: 0.468, blue: 0.453))
+                            
+                        }
+
+                    }
+                    
+                    if(!vm.isServicePlayer){
+                        VStack{
+                            Image("net").rotationEffect(Angle(degrees: 180))
+                            Spacer()
+                        }
+                    }else{
+                        VStack{
+                            Spacer()
+                            Image("net")
+                        }
+                    }
+                }
+               
+
+
+                HStack{
+                    Spacer()
+                    if(vm.isServicePlayer){
+                        Text("0 選手1: サービス").font(.title)
+                            .padding()
+                    }else{
+                        Text("0 選手1: 　　　　").font(.title)
+                            .padding()
+                    }
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    
+                    Button(action: {
+                        selsectCourse = 10
+                        self.isCheckSelect2 = true
+                    }) {
+                        Text("ミス").font(.title)
+                            .foregroundColor(.white)
+                            .frame(width: 160, height: 70, alignment: .center)
+                    }
+                    .background(selsectCourse == 10 ?  Color(red: 0.3125, green: 0.664, blue: 0.613) : Color(red: 0.191, green: 0.468, blue: 0.453))
+                    
+                    
+                    Spacer()
+                }
+                HStack{
+                    NavigationLink(destination: MatchReceiveView(count: Count)) {
+                            
+                        Text("確定").font(.title)
+                        .foregroundColor(.white)
+                        .frame(width: 180, height: 70).overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black, lineWidth: 2))
+                        .background(isCheckSelect1 && isCheckSelect2 ? Color(red: 0.917, green: 0.25, blue: 0.468) : Color(red: 0.87, green: 0.87, blue: 0.89))
+                        .cornerRadius(10)
+                        .padding()
+                        
+                    }.disabled(!isCheckSelect1 && !isCheckSelect2)
+
+                }
+            }
+            .onWillAppear {
+                vm.isServicePlayer.toggle()
+            }
+            
+            .navigationBarTitle(vm.isServicePlayer ? "選手1サービス" : "選手2サービス", displayMode: .inline)
             .navigationBarItems(trailing:
                     Button(action: {
 
                     }) {
-                        Text("スコアシート")
+                        NavigationLink(destination: ScoreView()) {
+                            Text("スコアシート")
+                        }
+                        
                     }
             )
             .navigationViewStyle(StackNavigationViewStyle())
             .navigationBarBackButtonHidden(true)
     
     }
-}
 
-struct MatchView2: View {
+}
+//レシーブ画面
+struct MatchReceiveView: View {
+    @State var array = ["チキータ","フリック","ストップ","ツッツキ","流し","ドライブ(強)","ドライブ(弱)","カット","逆チキータ"]
+    
+    @State var selsectBattingMethod = 0
+    @State var selsectCourse = 0
+    
+    @State private var isCheckSelect1 = false
+    @State private var isCheckSelect2 = false
+    
+    @State private var rallyCount = 1
+    
+    @EnvironmentObject var vm : ViewModel
+    
+    let count: Int
+    
     var body: some View {
-            VStack(spacing: 10){
-                HStack{
-                    NavigationLink(destination: MatchView1()) {
-                        Text("サービス交代").font(.title).frame(width: 200, height: 80).overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.blue, lineWidth: 1))
-                            .padding()
-                    }
-                        Spacer()
-                        NavigationLink(destination: Timeout()) {
-                            Text("タイムアウト").font(.title).frame(width: 200, height: 80).overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.blue, lineWidth: 1))
+        
+            VStack(spacing: 5){
+                
+                //打法
+                LazyVGrid(columns: Array(repeating: .init(.fixed(200)), count: 3), alignment: .center, spacing:10) { // カラム数の指定
+                    ForEach((1...9), id: \.self) { index in
+                        
+                        Button(action: {
+                            selsectBattingMethod = index
+                            vm.CheckR[vm.PlayCount][0] = index
+                            self.isCheckSelect1 = true
+                        }) {
+                            Text(array[index - 1]).font(.title)
+                                .foregroundColor(selsectBattingMethod == index ?  Color(red: 1, green: 1, blue: 1, opacity:0.4) : Color(red: 1, green: 1, blue: 1, opacity:1))
+                                
+                                .frame(width: 180, height: 70).overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.black, lineWidth: 1))
+                                .background(Color(red: 0.246, green: 0.5, blue: 0.992))
+                                .cornerRadius(10)
                                 .padding()
                         }
                         
                     }
-                    Spacer()
-                }.navigationBarTitle("選手2サービス", displayMode: .inline)
-        .navigationBarItems(trailing:
-                Button(action: {
-
-                }) {
-                    Text("スコアシート")
                 }
-        )
+
+                
+                HStack{
+                    Spacer()
+                    Button(action: {
+
+                    }) {
+                        Text("コート反転").font(.title)
+                            .foregroundColor(.white)
+                            .frame(width: 230, height: 50).overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 1))
+                            .background(Color(red: 0.191, green: 0.468, blue: 0.453))
+                            .cornerRadius(10)
+                            
+                    }
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                    Spacer()
+                        
+                }
+                
+                ZStack{
+                    //コース
+                    LazyVGrid(columns: Array(repeating: .init(.fixed(170)), count: 3), alignment: .center, spacing:5) {
+
+                        // カラム数の指定
+                        ForEach((1...9), id: \.self) { index in
+                            
+                            Button(action: {
+                                selsectCourse = index
+                                vm.CheckR[vm.PlayCount][1] = index
+                                self.isCheckSelect2 = true
+                            }) {
+                                Text("").frame(width: 170, height: 105, alignment: .center)
+                                    .border(Color.black , width: 1)
+                            }
+                            .background(selsectCourse == index ?  Color(red: 0.3125, green: 0.664, blue: 0.613) : Color(red: 0.191, green: 0.468, blue: 0.453))
+                            
+                        }
+
+                    }
+                    if(!vm.isServicePlayer){
+                        VStack{
+                            Image("net").rotationEffect(Angle(degrees: 180)).offset(x: 0, y: 30)
+                            Spacer()
+                        }
+                    }else{
+                        VStack{
+                            Spacer()
+                            Image("net").offset(x: 0, y: -30)
+                        }
+                    }
+                }
+                
+                HStack{
+                    Spacer()
+                    Text("ラリー回数:").font(.largeTitle)
+                        .foregroundColor(.blue)
+                    TextField("", value: $rallyCount, formatter: NumberFormatter())
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(.numberPad)
+                        .frame(width: 200, height: 50)
+                    Spacer()
+                    Spacer()
+
+                }
+                
+                HStack{
+
+                    NavigationLink(destination: MatchView1(Count: count + 1)) {
+                        
+                        Text("選手1Point").font(.title)
+                        .foregroundColor(.white)
+                        .frame(width: 180, height: 70).overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 2))
+                            .background(isCheckSelect1 && isCheckSelect2 ? Color(red: 0.917, green: 0.25, blue: 0.468) : Color(red: 0.87, green: 0.87, blue: 0.89))
+                        .cornerRadius(10)
+                        .padding()
+                    }.disabled(!isCheckSelect1 && !isCheckSelect2)
+
+                    
+                    
+                    NavigationLink(destination: MatchView1(Count: count + 1)) {
+                        Text("選手2Point").font(.title)
+                        .foregroundColor(.white)
+                        .frame(width: 180, height: 70).overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 2))
+                            .background(isCheckSelect1 && isCheckSelect2 ? Color(red: 0.246, green: 0.5, blue: 0.992) : Color(red: 0.87, green: 0.87, blue: 0.89))
+                        .cornerRadius(10)
+                        .padding()
+                    }.disabled(!isCheckSelect1 && !isCheckSelect2)
+
+                }
+                
+                
+                }
+                .onDisappear{
+                    vm.isServicePlayer.toggle()
+                }
+            
+            .navigationBarTitle(vm.isServicePlayer ? "選手2レシーブ" : "選手1レシーブ", displayMode: .inline)
         .navigationViewStyle(StackNavigationViewStyle())
-        .navigationBarBackButtonHidden(true)
         
     }
 }
@@ -309,36 +776,469 @@ struct Timeout: View {
 }
 
 
-
-struct TourokuView: View {
-    @State private var name = ""
-    @State private var group = ""
-    @State private var kikite = ""
+struct ScoreView: View {
+    @EnvironmentObject var vm : ViewModel
     
     var body: some View {
-        Text("選手名:").font(.largeTitle)
-        TextField("選手名", text: $name)
-            .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
-        .font(.largeTitle)
+        HStack{
+            Text("選手1サービス時の攻撃パターン").font(.largeTitle)
+                .padding()
+            Spacer()
+        }.onDisappear{
+            vm.isServicePlayer.toggle()
+        }
+        ZStack{
+            HStack{
+                Spacer()
+                Image("coat").resizable()
+                    .frame(width: 204, height: 240)
+                Spacer()
+                Image("coat").resizable()
+                    .frame(width: 204, height: 240)
+                Spacer()
+                Image("coat").resizable()
+                    .frame(width: 204, height: 240)
+                Spacer()
+                
+            }
+//            PathView()
+            Spacer()
+
+        }
         
-        Text("所属:").font(.largeTitle)
-        TextField("所属", text: $group)
-            .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
-        .font(.largeTitle)
+        HStack{
+            Spacer()
+            Text("->").font(.title)
+            Spacer()
+            Spacer()
+            Text("->").font(.title)
+            Spacer()
+            Spacer()
+            Text("->").font(.title)
+            Spacer()
+        }
+        HStack{
+            Spacer()
+            Text("(0/0)").font(.title)
+            Spacer()
+            Spacer()
+            Text("(0/0)").font(.title)
+            Spacer()
+            Spacer()
+            Text("(0/0)").font(.title)
+            Spacer()
+        }
         
-        Text("利き手:").font(.largeTitle)
-        TextField("利き手", text: $kikite)
-            .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
-        .font(.largeTitle)
+        HStack{
+            Text("選手1レシーブ時の攻撃パターン").font(.largeTitle)
+                .padding()
+            Spacer()
+        }
         
-        NavigationLink(destination: SecondView()) {
-            Text("登録").font(.title).frame(width: 200, height: 80).overlay(
-            RoundedRectangle(cornerRadius: 10)
-            .stroke(Color.blue, lineWidth: 1))
+        HStack{
+            Spacer()
+            Image("coat").resizable()
+                .frame(width: 204, height: 240)
+            Spacer()
+            Image("coat").resizable()
+                .frame(width: 204, height: 240)
+            Spacer()
+            Image("coat").resizable()
+                .frame(width: 204, height: 240)
+            Spacer()
+        }
+        
+        HStack{
+            Spacer()
+            Text("->").font(.title)
+            Spacer()
+            Spacer()
+            Text("->").font(.title)
+            Spacer()
+            Spacer()
+            Text("->").font(.title)
+            Spacer()
+        }
+        HStack{
+            Spacer()
+            Text("(0/0)").font(.title)
+            Spacer()
+            Spacer()
+            Text("(0/0)").font(.title)
+            Spacer()
+            Spacer()
+            Text("(0/0)").font(.title)
+            Spacer()
+        }
+        
+        HStack{
+            NavigationLink(destination: MatchView1(Count: vm.PlayCount)) {
+                Text("NEXT GAME").font(.title)
+                .foregroundColor(.white)
+                .frame(width: 180, height: 70).overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black, lineWidth: 2))
+                    .background(Color(red: 0.87, green: 0.87, blue: 0.89))
+                .cornerRadius(10)
+                .padding()
+            }
+            NavigationLink(destination: MatchView1(Count: vm.PlayCount)) {
+                Text("GAME SET").font(.title)
+                .foregroundColor(.white)
+                .frame(width: 180, height: 70).overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black, lineWidth: 2))
+                    .background(Color(red: 0.917, green: 0.25, blue: 0.468))
+                .cornerRadius(10)
+                .padding()
+            }
         }
         Spacer()
     }
 }
+
+struct coatView: View {
+    @EnvironmentObject var vm : ViewModel
+    
+    var body: some View {
+        VStack{
+            Image("coat").resizable()
+        }
+    }
+}
+
+struct PathView: View {
+    @EnvironmentObject var vm : ViewModel
+    
+    var body: some View {
+        
+        Path { path in
+            path.move(to: CGPoint(x: 15, y: 0))        // 始点移動
+            path.addLine(to: CGPoint(x: 30, y: 35))     // 直線描画
+            path.addLine(to: CGPoint(x: 0, y: 35))
+            path.addLine(to: CGPoint(x: 15, y: 0))
+            
+            path.move(to: CGPoint(x: 13, y: 35))        // 始点移動
+            if(vm.CheckS[0][1] == 1 || vm.CheckS[0][1] == 2 || vm.CheckS[0][1] == 3){
+                path.addLine(to: CGPoint(x: 13, y: 230))
+                path.addLine(to: CGPoint(x: 17, y: 230))
+            }else if(vm.CheckS[0][1] == 4 || vm.CheckS[0][1] == 5 || vm.CheckS[0][1] == 6){
+                path.addLine(to: CGPoint(x: 13, y: 195))
+                path.addLine(to: CGPoint(x: 17, y: 195))
+            }
+            else if(vm.CheckS[0][1] == 7 || vm.CheckS[0][1] == 8 || vm.CheckS[0][1] == 9){
+                path.addLine(to: CGPoint(x: 13, y: 160))
+                path.addLine(to: CGPoint(x: 17, y: 160))
+            }
+            
+            path.addLine(to: CGPoint(x: 17, y: 35))
+            path.addLine(to: CGPoint(x: 13, y: 35))
+
+            
+        }.fill(Color(red: 0.917, green: 0.25, blue: 0.468))// 塗りつぶし色指定
+        .frame(width: 30, height: 230)
+        
+        Path { path in
+            path.move(to: CGPoint(x: 45, y: 0))        // 始点移動
+            path.addLine(to: CGPoint(x: 60, y: 35))     // 直線描画
+            path.addLine(to: CGPoint(x: 30, y: 35))
+            path.addLine(to: CGPoint(x: 45, y: 0))
+            
+            path.move(to: CGPoint(x: 43, y: 35))        // 始点移動
+            if(vm.CheckR[0][1] == 1 || vm.CheckR[0][1] == 2 || vm.CheckR[0][1] == 3){
+                path.addLine(to: CGPoint(x: 43, y: 230))
+                path.addLine(to: CGPoint(x: 47, y: 230))
+            }else if(vm.CheckR[0][1] == 4 || vm.CheckR[0][1] == 5 || vm.CheckR[0][1] == 6){
+                path.addLine(to: CGPoint(x: 43, y: 195))
+                path.addLine(to: CGPoint(x: 47, y: 195))
+            }
+            else if(vm.CheckR[0][1] == 7 || vm.CheckR[0][1] == 8 || vm.CheckR[0][1] == 9){
+                path.addLine(to: CGPoint(x: 43, y: 160))
+                path.addLine(to: CGPoint(x: 47, y: 160))
+            }
+            
+            path.addLine(to: CGPoint(x: 47, y: 35))
+            path.addLine(to: CGPoint(x: 43, y: 35))
+
+            
+        }.fill(Color(red: 0.5, green: 0.25, blue: 0.468))// 塗りつぶし色指定
+        .frame(width: 30, height: 230)
+        
+        VStack{
+            Text("\(vm.CheckS[vm.PlayCount][0]):\(vm.CheckS[vm.PlayCount][1])")
+            Text("\(vm.CheckR[vm.PlayCount][0]):\(vm.CheckR[vm.PlayCount][1])")
+            Text("\(vm.PlayCount)")
+        }
+        
+    }
+}
+
+struct TourokuView: View {
+    @State private var name = ""
+    @State private var group = ""
+    
+    @State private var groupArray = ["","","",""]
+    @State private var addgroupSum = 1
+    
+    @State var HandednessArray = ["左利き","右利き"]
+    @State var SelectHandedness = 1
+
+    @State var RubberArray = ["表表","表裏","裏表","裏裏"]
+    @State private var SelectionRubber = 3
+    @State private var isShowingPicker = false
+    
+    @ObservedObject var kyotakuVM = KyotakuViewModel()
+    
+    var body: some View {
+        HStack{
+            Text("　　選手名:").font(.largeTitle).padding(20)
+            TextField("選手名", text: $name)
+                .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
+            .font(.largeTitle)
+            Spacer()
+            
+        }
+
+        VStack{
+        //カラム数の指定
+            ForEach((0...addgroupSum - 1), id: \.self) { index in
+                HStack{
+                    if(index == 0){
+                        Text("所属団体名:").font(.largeTitle).padding(20)
+                    }else{
+                        Text("　　　　　 ").font(.largeTitle).padding(20)
+                    }
+
+                    TextField("所属団体名", text: $groupArray[index])
+                        .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
+                    .font(.largeTitle)
+                    if(index == addgroupSum - 1){
+                        if(addgroupSum != 4){
+                            Button(action: {
+                                addgroupSum += 1
+                            }) {
+                                Text("＋").font(.title)
+                            }
+                        }
+
+                        if(index != 0){
+                            Button(action: {
+                                addgroupSum -= 1
+                            }) {
+                                Text("-").font(.title)
+                            }
+                        }
+                    }
+
+                }
+                
+            }
+        }
+        HStack {
+            NavigationLink(destination: SyozokuTourokuView()) {
+                Text("　　　　＊新たな所属団体を登録する").font(.title)
+                                            .underline()
+            }
+            Spacer()
+        }
+        //バグ回避用(消したい;;
+        NavigationLink(destination: SyozokuTourokuView()) {
+            Text("").font(.title)
+                                        .underline()
+        }
+        HStack{
+            Text("   　　利き手:").font(.largeTitle).padding(20)
+            
+            HStack{
+                // カラム数の指定
+                ForEach((1...2), id: \.self) { index in
+                    
+                        Spacer()
+                        Button(action: {
+                            SelectHandedness = index
+                        }) {
+                            if(SelectHandedness == index) {
+                                Image(systemName: "checkmark.square.fill")
+                                    .resizable()
+                                    .frame(width: 50, height: 50, alignment: .center)
+                            .foregroundColor(.green)
+                            } else {
+                                Image(systemName: "square")
+                                    .resizable()
+                                    .frame(width: 50, height: 50, alignment: .center)
+                            }
+                        }
+                        Text(HandednessArray[index - 1]).font(.title)
+                                                .foregroundColor(Color(red: 0, green: 0, blue: 0, opacity:1))
+                        .frame(width: 180, height: 70)
+                        Spacer()
+                        Spacer()
+                        Spacer()
+                        Spacer()
+                        Spacer()
+                        Spacer()
+                    }
+                
+            }
+        }
+        HStack{
+            Text("    　　戦型:").font(.largeTitle).padding(20)
+            
+            Button(action: {
+                self.isShowingPicker.toggle()
+            }) {
+                Text("\(RubberArray[self.SelectionRubber])")
+                        .font(.largeTitle)
+                    
+            }
+            
+            Spacer()
+                        
+        }
+        //打法
+//        LazyVGrid(columns: Array(repeating: .init(.fixed(200)), count: 2), alignment: .center, spacing:10) { // カラム数の指定
+//            ForEach((1...4), id: \.self) { index in
+//                HStack{
+//                    Button(action: {
+//                        SelectRubber = index
+//                    }) {
+//                        if(SelectRubber == index) {
+//                            Image(systemName: "checkmark.square.fill")
+//                                .resizable()
+//                                .frame(width: 50, height: 50, alignment: .center)
+//                        .foregroundColor(.green)
+//                        } else {
+//                            Image(systemName: "square")
+//                                .resizable()
+//                                .frame(width: 50, height: 50, alignment: .center)
+//                        }
+//                    }
+//                    Text(RubberArray[index - 1]).font(.title)
+//                                            .foregroundColor(Color(red: 0, green: 0, blue: 0, opacity:1))
+//                    .frame(width: 180, height: 70)
+//
+//                }
+//            }
+//        }
+        
+        
+//        Text("戦型:").font(.largeTitle)
+//        TextField("戦型", text: $sengata)
+//            .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
+//        .font(.largeTitle)
+        
+        
+        NavigationLink(destination: SiaiTourokuView()) {
+            Text("登録").font(.title).frame(width: 200, height: 80).overlay(
+            RoundedRectangle(cornerRadius: 10)
+            .stroke(Color.blue, lineWidth: 1))
+        }.simultaneousGesture(TapGesture().onEnded{
+            self.kyotakuVM.addUserData(handedness: SelectHandedness, player_name: name, rubber: self.SelectionRubber, group1: groupArray[0], group2: groupArray[1], group3: groupArray[2], group4: groupArray[3])
+        })
+
+        BattleTypePicker(selection: self.$SelectionRubber, isShowing: self.$isShowingPicker)
+                    .animation(.linear)
+                    .offset(y: self.isShowingPicker ? 0 : UIScreen.main.bounds.height)
+    }
+}
+
+struct SyozokuTourokuView: View {
+    
+    @State private var SetGroup = ""
+    @ObservedObject var kyotakuVM = KyotakuViewModel()
+    
+    var body: some View {
+        HStack{
+            Text("所属団体名:").font(.largeTitle).padding(20)
+            TextField("所属団体名", text: $SetGroup)
+                .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
+            .font(.largeTitle)
+            Spacer()
+        }
+        NavigationLink(destination: TourokuView()) {
+            Text("登録").font(.title).frame(width: 200, height: 80).overlay(
+            RoundedRectangle(cornerRadius: 10)
+            .stroke(Color.blue, lineWidth: 1))
+        }.simultaneousGesture(TapGesture().onEnded{
+            self.kyotakuVM.addGroupData(group: SetGroup)
+        })
+        Spacer()
+    }
+}
+
+struct BattleTypePicker: View {
+    @Binding var selection: Int
+    @Binding var isShowing: Bool
+    @State var RubberArray = ["表表","表裏","裏表","裏裏"]
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            Button(action: {
+                self.isShowing = false
+            }) {
+                HStack {
+                    Spacer()
+                    Text("Close")
+                        .padding(.horizontal, 16)
+                }
+            }
+            
+            Picker(selection: $selection, label: Text("")) {
+                ForEach(0 ..< RubberArray.count) { num in
+                        Text(self.RubberArray[num])
+                }
+            }
+            .frame(width: 200)
+            .labelsHidden()
+        }
+    }
+}
+
+struct PlayerNamePicker: View {
+    @Binding var selection: Int
+    @Binding var isShowing: Bool
+    @Binding var NameArray: Array<String>
+    
+    var body: some View {
+        VStack {
+            
+            Spacer()
+            Button(action: {
+                self.isShowing = false
+            }) {
+                HStack {
+                    Spacer()
+                    Text("Close")
+                        .padding(.horizontal, 16)
+                }
+            }
+            
+            Picker(selection: $selection, label: Text("")) {
+                
+                ForEach(0 ..< NameArray.count, id: \.self) { num in
+                    Text(verbatim: self.NameArray[num] )
+                }
+            }.frame(width: 200)
+            .labelsHidden()
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -662,6 +1562,55 @@ struct MemberListView: View {
     }
 }
 
+struct ViewWillAppearHandler: UIViewControllerRepresentable {
+    func makeCoordinator() -> ViewWillAppearHandler.Coordinator {
+        Coordinator(onWillAppear: onWillAppear)
+    }
+
+    let onWillAppear: () -> Void
+
+    func makeUIViewController(context: UIViewControllerRepresentableContext<ViewWillAppearHandler>) -> UIViewController {
+        context.coordinator
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<ViewWillAppearHandler>) {
+    }
+
+    typealias UIViewControllerType = UIViewController
+
+    class Coordinator: UIViewController {
+        let onWillAppear: () -> Void
+
+        init(onWillAppear: @escaping () -> Void) {
+            self.onWillAppear = onWillAppear
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            onWillAppear()
+        }
+    }
+}
+
+struct ViewWillAppearModifier: ViewModifier {
+    let callback: () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .background(ViewWillAppearHandler(onWillAppear: callback))
+    }
+}
+
+extension View {
+    func onWillAppear(_ perform: @escaping (() -> Void)) -> some View {
+        self.modifier(ViewWillAppearModifier(callback: perform))
+    }
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

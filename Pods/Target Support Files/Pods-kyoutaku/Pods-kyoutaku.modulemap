@@ -1,0 +1,6 @@
+framework module Pods_kyoutaku {
+  umbrella header "Pods-kyoutaku-umbrella.h"
+
+  export *
+  module * { export * }
+}
