@@ -596,9 +596,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = kyoutaku/kyoutaku.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"kyoutaku/Preview Content\"";
-				DEVELOPMENT_TEAM = SM57646XVK;
+				DEVELOPMENT_TEAM = X9UU7S827U;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = kyoutaku/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -606,8 +607,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Adachi-Kenta.kyoutaku1";
+				PRODUCT_BUNDLE_IDENTIFIER = "Adachi-Kenta.kyoutaku";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -620,9 +622,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = kyoutaku/kyoutaku.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"kyoutaku/Preview Content\"";
-				DEVELOPMENT_TEAM = SM57646XVK;
+				DEVELOPMENT_TEAM = X9UU7S827U;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = kyoutaku/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -630,8 +633,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Adachi-Kenta.kyoutaku1";
+				PRODUCT_BUNDLE_IDENTIFIER = "Adachi-Kenta.kyoutaku";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

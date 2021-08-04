@@ -5,7 +5,6 @@
 //  Created by k18004kk on 2021/05/20.
 //  Copyright © 2021 AIT. All rights reserved.
 //
-
 import Foundation
 import Firebase
 
@@ -43,10 +42,16 @@ struct userDataType: Identifiable {
     var rubber: Int
 }
 
+struct groupDataType: Identifiable {
+    var id: String = UUID().uuidString
+    var group: String
+}
+
 class KyotakuViewModel: ObservableObject {
     
     @Published var singles = [singlesDataType]()
     @Published var users = [userDataType]()
+    @Published var groups = [groupDataType]()
     private var db = Firestore.firestore()
     
     init() {
@@ -174,6 +179,21 @@ class KyotakuViewModel: ObservableObject {
                 let rubber = data["rubber"] as? Int ?? 0
 
                 return userDataType(group_id: id, player_name: name, handedness: handedness, rubber: rubber)
+            }
+        }
+    }
+    func fetchData1() {
+        db.collection("group").addSnapshotListener { (querySnapshot, error) in
+            guard let documents = querySnapshot?.documents else {
+                print("No documents")
+                return
+            }
+            
+            self.groups = documents.map { (queryDocumentSnapshot) -> groupDataType in
+                let data = queryDocumentSnapshot.data()
+                let group = data["group"] as? String ?? ""
+
+                return groupDataType(group: group)
             }
         }
     }

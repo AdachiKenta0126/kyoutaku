@@ -5,16 +5,13 @@
 //  Created by k18004kk on 2021/03/17.
 //  Copyright © 2021 AIT. All rights reserved.
 //
-
 import SwiftUI
 import FirebaseAuth
 import Firebase
 
 class ViewModel: ObservableObject {
     @Published var isServicePlayer = false
-    
-    @Published var CheckS: [[Int]] = [[Int]](repeating: [Int](repeating: 0, count: 2), count: 100)
-    @Published var CheckR: [[Int]] = [[Int]](repeating: [Int](repeating: 0, count: 2), count: 100)
+    @Published var isNetPosition = false
     
     @Published var PlayCount: Int = 0
     
@@ -348,15 +345,17 @@ struct SiaiTourokuView: View {
                 Text("").font(.title)
                                             .underline()
             }
-            
-            NavigationLink(destination: MatchView1(Count: 0)) {
-                Text("登録").font(.title).frame(width: 200, height: 80).overlay(
-                RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.blue, lineWidth: 1))
+            if(SelectionPlayer1 != -1 && SelectionPlayer2 != -1){
+                NavigationLink(destination: MatchView1(Count: 0, Player1: ArrayPlayer[self.SelectionPlayer1], Player2: ArrayPlayer[self.SelectionPlayer2])) {
+                    Text("登録").font(.title).frame(width: 200, height: 80).overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.blue, lineWidth: 1))
 
-            }.simultaneousGesture(TapGesture().onEnded{
-                print("Hello world!")
-            })
+                }.simultaneousGesture(TapGesture().onEnded{
+                    print("Hello world!")
+                })
+            }
+            
             
             ZStack{
                 PlayerNamePicker(selection: self.$SelectionPlayer1, isShowing: self.$isShowingPicker1, NameArray: self.$ArrayPlayer)
@@ -404,16 +403,22 @@ struct MatchView1: View {
     
     @EnvironmentObject var vm : ViewModel
     
-    let Count: Int
+    @State var Count: Int
+    
+    @State var Player1: String
+    @State var Player2: String
+    
     
     var body: some View {
             
             VStack(spacing: 5){
+
                 HStack{
                     Spacer()
                     Spacer()
                     Button(action: {
                         vm.isServicePlayer.toggle()
+                        vm.isNetPosition.toggle()
                     }) {
                         Text("サービス交代").font(.title)
                         .foregroundColor(.white)
@@ -449,8 +454,6 @@ struct MatchView1: View {
                         
                         Button(action: {
                             selsectBattingMethod = index
-                            vm.CheckS[vm.PlayCount
-                            ][0] = index
                             self.isCheckSelect1 = true
                         }) {
                             Text(array[index - 1]).font(.title)
@@ -470,7 +473,7 @@ struct MatchView1: View {
                 HStack{
                     Spacer()
                     Button(action: {
-
+                        vm.isNetPosition.toggle()
                     }) {
                         
                         Text("コート反転").font(.title)
@@ -496,10 +499,10 @@ struct MatchView1: View {
                 HStack{
                     Spacer()
                     if(vm.isServicePlayer){
-                        Text("0 選手2: 　　　　").font(.title)
+                        Text("0 \(Player2): 　　　　").font(.title)
                             .padding()
                     }else{
-                        Text("0 選手2: サービス").font(.title)
+                        Text("0 \(Player2): サービス").font(.title)
                             .padding()
                     }
                     Spacer()
@@ -520,7 +523,6 @@ struct MatchView1: View {
                             
                             Button(action: {
                                 selsectCourse = index
-                                vm.CheckS[vm.PlayCount][1] = index
                                 self.isCheckSelect2 = true
                                 
                             }) {
@@ -533,7 +535,7 @@ struct MatchView1: View {
 
                     }
                     
-                    if(!vm.isServicePlayer){
+                    if(!vm.isNetPosition){
                         VStack{
                             Image("net").rotationEffect(Angle(degrees: 180))
                             Spacer()
@@ -551,10 +553,11 @@ struct MatchView1: View {
                 HStack{
                     Spacer()
                     if(vm.isServicePlayer){
-                        Text("0 選手1: サービス").font(.title)
+
+                        Text("0 \(Player1): サービス").font(.title)
                             .padding()
                     }else{
-                        Text("0 選手1: 　　　　").font(.title)
+                        Text("0 \(Player1): 　　　　").font(.title)
                             .padding()
                     }
                     Spacer()
@@ -576,7 +579,7 @@ struct MatchView1: View {
                     Spacer()
                 }
                 HStack{
-                    NavigationLink(destination: MatchReceiveView(count: Count)) {
+                    NavigationLink(destination: MatchReceiveView(count: Count, Player1: Player1, Player2: Player2)) {
                             
                         Text("確定").font(.title)
                         .foregroundColor(.white)
@@ -593,14 +596,17 @@ struct MatchView1: View {
             }
             .onWillAppear {
                 vm.isServicePlayer.toggle()
+                if(Count != 0 && Count % 2 == 0){
+                    vm.isServicePlayer.toggle()
+                }
             }
             
-            .navigationBarTitle(vm.isServicePlayer ? "選手1サービス" : "選手2サービス", displayMode: .inline)
+            .navigationBarTitle(vm.isServicePlayer ? "\(Player1)サービス" : "\(Player2)サービス", displayMode: .inline)
             .navigationBarItems(trailing:
                     Button(action: {
 
                     }) {
-                        NavigationLink(destination: ScoreView()) {
+                        NavigationLink(destination: ScoreView(Player1: Player1, Player2: Player2)) {
                             Text("スコアシート")
                         }
                         
@@ -608,6 +614,7 @@ struct MatchView1: View {
             )
             .navigationViewStyle(StackNavigationViewStyle())
             .navigationBarBackButtonHidden(true)
+        
     
     }
 
@@ -626,7 +633,9 @@ struct MatchReceiveView: View {
     
     @EnvironmentObject var vm : ViewModel
     
-    let count: Int
+    @State var count: Int
+    @State var Player1: String
+    @State var Player2: String
     
     var body: some View {
         
@@ -638,7 +647,6 @@ struct MatchReceiveView: View {
                         
                         Button(action: {
                             selsectBattingMethod = index
-                            vm.CheckR[vm.PlayCount][0] = index
                             self.isCheckSelect1 = true
                         }) {
                             Text(array[index - 1]).font(.title)
@@ -689,7 +697,6 @@ struct MatchReceiveView: View {
                             
                             Button(action: {
                                 selsectCourse = index
-                                vm.CheckR[vm.PlayCount][1] = index
                                 self.isCheckSelect2 = true
                             }) {
                                 Text("").frame(width: 170, height: 105, alignment: .center)
@@ -700,7 +707,7 @@ struct MatchReceiveView: View {
                         }
 
                     }
-                    if(!vm.isServicePlayer){
+                    if(vm.isNetPosition){
                         VStack{
                             Image("net").rotationEffect(Angle(degrees: 180)).offset(x: 0, y: 30)
                             Spacer()
@@ -728,9 +735,9 @@ struct MatchReceiveView: View {
                 
                 HStack{
 
-                    NavigationLink(destination: MatchView1(Count: count + 1)) {
+                    NavigationLink(destination: MatchView1(Count: count + 1, Player1: Player1, Player2: Player2)) {
                         
-                        Text("選手1Point").font(.title)
+                        Text("\(Player1)Point").font(.title)
                         .foregroundColor(.white)
                         .frame(width: 180, height: 70).overlay(
                         RoundedRectangle(cornerRadius: 10)
@@ -742,8 +749,8 @@ struct MatchReceiveView: View {
 
                     
                     
-                    NavigationLink(destination: MatchView1(Count: count + 1)) {
-                        Text("選手2Point").font(.title)
+                    NavigationLink(destination: MatchView1(Count: count + 1, Player1: Player1, Player2: Player2)) {
+                        Text("\(Player2)Point").font(.title)
                         .foregroundColor(.white)
                         .frame(width: 180, height: 70).overlay(
                         RoundedRectangle(cornerRadius: 10)
@@ -761,7 +768,7 @@ struct MatchReceiveView: View {
                     vm.isServicePlayer.toggle()
                 }
             
-            .navigationBarTitle(vm.isServicePlayer ? "選手2レシーブ" : "選手1レシーブ", displayMode: .inline)
+            .navigationBarTitle(vm.isServicePlayer ? "\(Player2)レシーブ" : "\(Player1)レシーブ", displayMode: .inline)
         .navigationViewStyle(StackNavigationViewStyle())
         
     }
@@ -778,10 +785,12 @@ struct Timeout: View {
 
 struct ScoreView: View {
     @EnvironmentObject var vm : ViewModel
+    @State var Player1: String
+    @State var Player2: String
     
     var body: some View {
         HStack{
-            Text("選手1サービス時の攻撃パターン").font(.largeTitle)
+            Text("\(Player1)サービス時の攻撃パターン").font(.largeTitle)
                 .padding()
             Spacer()
         }.onDisappear{
@@ -830,7 +839,7 @@ struct ScoreView: View {
         }
         
         HStack{
-            Text("選手1レシーブ時の攻撃パターン").font(.largeTitle)
+            Text("\(Player1)レシーブ時の攻撃パターン").font(.largeTitle)
                 .padding()
             Spacer()
         }
@@ -872,7 +881,7 @@ struct ScoreView: View {
         }
         
         HStack{
-            NavigationLink(destination: MatchView1(Count: vm.PlayCount)) {
+            NavigationLink(destination: MatchView1(Count: vm.PlayCount, Player1: Player1, Player2: Player2)) {
                 Text("NEXT GAME").font(.title)
                 .foregroundColor(.white)
                 .frame(width: 180, height: 70).overlay(
@@ -882,7 +891,7 @@ struct ScoreView: View {
                 .cornerRadius(10)
                 .padding()
             }
-            NavigationLink(destination: MatchView1(Count: vm.PlayCount)) {
+            NavigationLink(destination: MatchView1(Count: vm.PlayCount, Player1: Player1, Player2: Player2)) {
                 Text("GAME SET").font(.title)
                 .foregroundColor(.white)
                 .frame(width: 180, height: 70).overlay(
@@ -918,18 +927,18 @@ struct PathView: View {
             path.addLine(to: CGPoint(x: 0, y: 35))
             path.addLine(to: CGPoint(x: 15, y: 0))
             
-            path.move(to: CGPoint(x: 13, y: 35))        // 始点移動
-            if(vm.CheckS[0][1] == 1 || vm.CheckS[0][1] == 2 || vm.CheckS[0][1] == 3){
-                path.addLine(to: CGPoint(x: 13, y: 230))
-                path.addLine(to: CGPoint(x: 17, y: 230))
-            }else if(vm.CheckS[0][1] == 4 || vm.CheckS[0][1] == 5 || vm.CheckS[0][1] == 6){
-                path.addLine(to: CGPoint(x: 13, y: 195))
-                path.addLine(to: CGPoint(x: 17, y: 195))
-            }
-            else if(vm.CheckS[0][1] == 7 || vm.CheckS[0][1] == 8 || vm.CheckS[0][1] == 9){
-                path.addLine(to: CGPoint(x: 13, y: 160))
-                path.addLine(to: CGPoint(x: 17, y: 160))
-            }
+//            path.move(to: CGPoint(x: 13, y: 35))        // 始点移動
+//            if(vm.CheckS[0][1] == 1 || vm.CheckS[0][1] == 2 || vm.CheckS[0][1] == 3){
+//                path.addLine(to: CGPoint(x: 13, y: 230))
+//                path.addLine(to: CGPoint(x: 17, y: 230))
+//            }else if(vm.CheckS[0][1] == 4 || vm.CheckS[0][1] == 5 || vm.CheckS[0][1] == 6){
+//                path.addLine(to: CGPoint(x: 13, y: 195))
+//                path.addLine(to: CGPoint(x: 17, y: 195))
+//            }
+//            else if(vm.CheckS[0][1] == 7 || vm.CheckS[0][1] == 8 || vm.CheckS[0][1] == 9){
+//                path.addLine(to: CGPoint(x: 13, y: 160))
+//                path.addLine(to: CGPoint(x: 17, y: 160))
+//            }
             
             path.addLine(to: CGPoint(x: 17, y: 35))
             path.addLine(to: CGPoint(x: 13, y: 35))
@@ -944,18 +953,18 @@ struct PathView: View {
             path.addLine(to: CGPoint(x: 30, y: 35))
             path.addLine(to: CGPoint(x: 45, y: 0))
             
-            path.move(to: CGPoint(x: 43, y: 35))        // 始点移動
-            if(vm.CheckR[0][1] == 1 || vm.CheckR[0][1] == 2 || vm.CheckR[0][1] == 3){
-                path.addLine(to: CGPoint(x: 43, y: 230))
-                path.addLine(to: CGPoint(x: 47, y: 230))
-            }else if(vm.CheckR[0][1] == 4 || vm.CheckR[0][1] == 5 || vm.CheckR[0][1] == 6){
-                path.addLine(to: CGPoint(x: 43, y: 195))
-                path.addLine(to: CGPoint(x: 47, y: 195))
-            }
-            else if(vm.CheckR[0][1] == 7 || vm.CheckR[0][1] == 8 || vm.CheckR[0][1] == 9){
-                path.addLine(to: CGPoint(x: 43, y: 160))
-                path.addLine(to: CGPoint(x: 47, y: 160))
-            }
+//            path.move(to: CGPoint(x: 43, y: 35))        // 始点移動
+//            if(vm.CheckR[0][1] == 1 || vm.CheckR[0][1] == 2 || vm.CheckR[0][1] == 3){
+//                path.addLine(to: CGPoint(x: 43, y: 230))
+//                path.addLine(to: CGPoint(x: 47, y: 230))
+//            }else if(vm.CheckR[0][1] == 4 || vm.CheckR[0][1] == 5 || vm.CheckR[0][1] == 6){
+//                path.addLine(to: CGPoint(x: 43, y: 195))
+//                path.addLine(to: CGPoint(x: 47, y: 195))
+//            }
+//            else if(vm.CheckR[0][1] == 7 || vm.CheckR[0][1] == 8 || vm.CheckR[0][1] == 9){
+//                path.addLine(to: CGPoint(x: 43, y: 160))
+//                path.addLine(to: CGPoint(x: 47, y: 160))
+//            }
             
             path.addLine(to: CGPoint(x: 47, y: 35))
             path.addLine(to: CGPoint(x: 43, y: 35))
@@ -965,8 +974,8 @@ struct PathView: View {
         .frame(width: 30, height: 230)
         
         VStack{
-            Text("\(vm.CheckS[vm.PlayCount][0]):\(vm.CheckS[vm.PlayCount][1])")
-            Text("\(vm.CheckR[vm.PlayCount][0]):\(vm.CheckR[vm.PlayCount][1])")
+//            Text("\(vm.CheckS[vm.PlayCount][0]):\(vm.CheckS[vm.PlayCount][1])")
+//            Text("\(vm.CheckR[vm.PlayCount][0]):\(vm.CheckR[vm.PlayCount][1])")
             Text("\(vm.PlayCount)")
         }
         
@@ -987,7 +996,25 @@ struct TourokuView: View {
     @State private var SelectionRubber = 3
     @State private var isShowingPicker = false
     
-    @ObservedObject var kyotakuVM = KyotakuViewModel()
+    //所属一覧
+    @State private var ArrayGroup = [String]()
+    
+    //データモデル(Firestore)
+    @ObservedObject private var kyotakuVM = KyotakuViewModel()
+    
+    //所属選択
+    
+    @State private var SelectionGroupArray = [-1,-2,-3,-4]
+    
+    //pickerが表示されているか
+    @State private var isShowingPicker1 = false
+    @State private var isShowingPicker2 = false
+    @State private var isShowingPicker3 = false
+    @State private var isShowingPicker4 = false
+    
+    //アラートフラグ
+    @State private var showingAlert1 = false
+    @State private var showingAlert2 = false
     
     var body: some View {
         HStack{
@@ -1008,12 +1035,53 @@ struct TourokuView: View {
                     }else{
                         Text("　　　　　 ").font(.largeTitle).padding(20)
                     }
+                    
+                    Button(action: {
+                        //まだ読み込まれてないなら
+                        if ArrayGroup.isEmpty{
+                            kyotakuVM.groups.forEach() { groups in
+                                ArrayGroup.append(groups.group)
+                            }
+                        }
+                        if(index == 0){
+                            self.isShowingPicker1.toggle()
+                            self.isShowingPicker2 = false
+                            self.isShowingPicker3 = false
+                            self.isShowingPicker4 = false
+                        }else if(index == 1){
+                            self.isShowingPicker1 = false
+                            self.isShowingPicker2.toggle()
+                            self.isShowingPicker3 = false
+                            self.isShowingPicker4 = false
+                        }else if(index == 2){
+                            self.isShowingPicker1 = false
+                            self.isShowingPicker2 = false
+                            self.isShowingPicker3.toggle()
+                            self.isShowingPicker4 = false
+                        }else if(index == 3){
+                            self.isShowingPicker1 = false
+                            self.isShowingPicker2 = false
+                            self.isShowingPicker3 = false
+                            self.isShowingPicker4.toggle()
+                        }
+                        
 
-                    TextField("所属団体名", text: $groupArray[index])
-                        .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
-                    .font(.largeTitle)
+                    }) {
+                        if(SelectionGroupArray[index] < 0){
+                            Text("所属を選択")
+                                .padding()
+                                .font(.largeTitle)
+                        }else{
+                            Text("\(ArrayGroup[SelectionGroupArray[index]])")
+                                    .padding()
+                                    .font(.largeTitle)
+                        }
+                    }
+//                    TextField("所属団体名", text: $groupArray[index])
+//                        .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
+//                    .font(.largeTitle)
                     if(index == addgroupSum - 1){
-                        if(addgroupSum != 4){
+                        if(addgroupSum != 4 && SelectionGroupArray[addgroupSum - 1] >= 0){
                             Button(action: {
                                 addgroupSum += 1
                             }) {
@@ -1023,16 +1091,23 @@ struct TourokuView: View {
 
                         if(index != 0){
                             Button(action: {
+                                SelectionGroupArray[addgroupSum - 1] = -1 * addgroupSum
                                 addgroupSum -= 1
                             }) {
                                 Text("-").font(.title)
                             }
                         }
                     }
-
+                    Spacer()
                 }
-                
             }
+        }.onAppear(){
+            self.kyotakuVM.fetchData1()
+            
+        }.alert(isPresented: $showingAlert1) {
+            Alert(title: Text("保存の失敗"),
+                  message: Text("重複した所属が選択されています"),
+                  dismissButton: .default(Text("了解")))  // ボタンの変更
         }
         HStack {
             NavigationLink(destination: SyozokuTourokuView()) {
@@ -1040,6 +1115,9 @@ struct TourokuView: View {
                                             .underline()
             }
             Spacer()
+        }.alert(isPresented: $showingAlert2) {
+            Alert(title: Text("保存しました"),
+                  dismissButton: .default(Text("了解")))  // ボタンの変更
         }
         //バグ回避用(消したい;;
         NavigationLink(destination: SyozokuTourokuView()) {
@@ -1095,50 +1173,52 @@ struct TourokuView: View {
             Spacer()
                         
         }
-        //打法
-//        LazyVGrid(columns: Array(repeating: .init(.fixed(200)), count: 2), alignment: .center, spacing:10) { // カラム数の指定
-//            ForEach((1...4), id: \.self) { index in
-//                HStack{
-//                    Button(action: {
-//                        SelectRubber = index
-//                    }) {
-//                        if(SelectRubber == index) {
-//                            Image(systemName: "checkmark.square.fill")
-//                                .resizable()
-//                                .frame(width: 50, height: 50, alignment: .center)
-//                        .foregroundColor(.green)
-//                        } else {
-//                            Image(systemName: "square")
-//                                .resizable()
-//                                .frame(width: 50, height: 50, alignment: .center)
-//                        }
-//                    }
-//                    Text(RubberArray[index - 1]).font(.title)
-//                                            .foregroundColor(Color(red: 0, green: 0, blue: 0, opacity:1))
-//                    .frame(width: 180, height: 70)
-//
-//                }
-//            }
-//        }
-        
-        
-//        Text("戦型:").font(.largeTitle)
-//        TextField("戦型", text: $sengata)
-//            .textFieldStyle(RoundedBorderTextFieldStyle())  // 入力域のまわりを枠で囲む
-//        .font(.largeTitle)
-        
-        
-        NavigationLink(destination: SiaiTourokuView()) {
+        Button(action: {
+            for i in 0..<SelectionGroupArray.count{
+                for j in i+1..<SelectionGroupArray.count{
+                    if(SelectionGroupArray[i] == SelectionGroupArray[j]){
+                        self.showingAlert1 = true
+                    }
+                }
+            }
+            if (showingAlert1 == false){
+                self.showingAlert2 = true
+                if(SelectionGroupArray[3] >= 0){
+                    self.kyotakuVM.addUserData(handedness: SelectHandedness, player_name: name, rubber: self.SelectionRubber, group1: ArrayGroup[SelectionGroupArray[0]], group2: ArrayGroup[SelectionGroupArray[1]], group3: ArrayGroup[SelectionGroupArray[2]], group4: ArrayGroup[SelectionGroupArray[3]])
+                }else if(SelectionGroupArray[2] >= 0){
+                    self.kyotakuVM.addUserData(handedness: SelectHandedness, player_name: name, rubber: self.SelectionRubber, group1: ArrayGroup[SelectionGroupArray[0]], group2: ArrayGroup[SelectionGroupArray[1]], group3: ArrayGroup[SelectionGroupArray[2]], group4: "")
+                }else if(SelectionGroupArray[1] >= 0){
+                    self.kyotakuVM.addUserData(handedness: SelectHandedness, player_name: name, rubber: self.SelectionRubber, group1: ArrayGroup[SelectionGroupArray[0]], group2: ArrayGroup[SelectionGroupArray[1]], group3: "", group4: "")
+                }else if(SelectionGroupArray[0] >= 0){
+                    self.kyotakuVM.addUserData(handedness: SelectHandedness, player_name: name, rubber: self.SelectionRubber, group1: ArrayGroup[SelectionGroupArray[0]], group2: "", group3: "", group4: "")
+                }
+            }
+        }) {
             Text("登録").font(.title).frame(width: 200, height: 80).overlay(
             RoundedRectangle(cornerRadius: 10)
             .stroke(Color.blue, lineWidth: 1))
-        }.simultaneousGesture(TapGesture().onEnded{
-            self.kyotakuVM.addUserData(handedness: SelectHandedness, player_name: name, rubber: self.SelectionRubber, group1: groupArray[0], group2: groupArray[1], group3: groupArray[2], group4: groupArray[3])
-        })
+        }
+        
+        VStack{
+            ZStack{
+            BattleTypePicker(selection: self.$SelectionRubber, isShowing: self.$isShowingPicker)
+                        .animation(.linear)
+                        .offset(y: self.isShowingPicker ? 0 : UIScreen.main.bounds.height)
+            
+            GroupNamePicker(selection: self.$SelectionGroupArray[0], isShowing: self.$isShowingPicker1, GroupArray: self.$ArrayGroup)
+                .offset(y: self.isShowingPicker1 ? CGFloat(0) : UIScreen.main.bounds.height)
 
-        BattleTypePicker(selection: self.$SelectionRubber, isShowing: self.$isShowingPicker)
-                    .animation(.linear)
-                    .offset(y: self.isShowingPicker ? 0 : UIScreen.main.bounds.height)
+            GroupNamePicker(selection: self.$SelectionGroupArray[1], isShowing: self.$isShowingPicker2, GroupArray: self.$ArrayGroup)
+                .offset(y: self.isShowingPicker2 ? CGFloat(0) : UIScreen.main.bounds.height)
+
+            GroupNamePicker(selection: self.$SelectionGroupArray[2], isShowing: self.$isShowingPicker3, GroupArray: self.$ArrayGroup)
+                .offset(y: self.isShowingPicker3 ? CGFloat(0) : UIScreen.main.bounds.height)
+
+            GroupNamePicker(selection: self.$SelectionGroupArray[3], isShowing: self.$isShowingPicker4, GroupArray: self.$ArrayGroup)
+                .offset(y: self.isShowingPicker4 ? CGFloat(0) : UIScreen.main.bounds.height)
+            }
+        }
+
     }
 }
 
@@ -1187,6 +1267,7 @@ struct BattleTypePicker: View {
             Picker(selection: $selection, label: Text("")) {
                 ForEach(0 ..< RubberArray.count) { num in
                         Text(self.RubberArray[num])
+                            .font(.title)
                 }
             }
             .frame(width: 200)
@@ -1217,7 +1298,39 @@ struct PlayerNamePicker: View {
             Picker(selection: $selection, label: Text("")) {
                 
                 ForEach(0 ..< NameArray.count, id: \.self) { num in
-                    Text(verbatim: self.NameArray[num] )
+                    Text(verbatim: self.NameArray[num])
+                        .font(.title)
+                }
+            }.frame(width: 200)
+            .labelsHidden()
+        }
+    }
+}
+
+struct GroupNamePicker: View {
+    @Binding var selection: Int
+    @Binding var isShowing: Bool
+    @Binding var GroupArray: Array<String>
+    
+    var body: some View {
+        VStack {
+            
+            Spacer()
+            Button(action: {
+                self.isShowing = false
+            }) {
+                HStack {
+                    Spacer()
+                    Text("Close")
+                        .padding(.horizontal, 16)
+                }
+            }
+            
+            Picker(selection: $selection, label: Text("")) {
+                
+                ForEach(0 ..< GroupArray.count, id: \.self) { num in
+                    Text(verbatim: self.GroupArray[num])
+                        .font(.title)
                 }
             }.frame(width: 200)
             .labelsHidden()
@@ -1241,7 +1354,7 @@ struct PlayerNamePicker: View {
 
 
 
-
+//以下ログイン機能(現状保留)
 struct AuthTestSignInView: View {
     
     @State private var isSignedIn = false
@@ -1617,4 +1730,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
