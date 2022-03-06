@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>307368314882-jt3jrriluss6q8kj4dcfk10lits347ad.apps.googleusercontent.com</string>
+	<string>307368314882-htpce9d2vv17m60m8um5vfo82603bj69.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.307368314882-jt3jrriluss6q8kj4dcfk10lits347ad</string>
+	<string>com.googleusercontent.apps.307368314882-htpce9d2vv17m60m8um5vfo82603bj69</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDD-sZuK6h8p00TQCGuerqtqQH7Ihw8rc0</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>Adachi-Kenta.kyoutaku</string>
+	<string>SawanoLabo.kyoutaku</string>
 	<key>PROJECT_ID</key>
 	<string>kyotaku-3c44e</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:307368314882:ios:56de09f4679b9690783f1b</string>
+	<string>1:307368314882:ios:1d86e100a21b302d783f1b</string>
 </dict>
 </plist>
